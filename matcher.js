@@ -1,5 +1,6 @@
 const knownTLDs = [
   'com',
+  'net'
 ]
 
 module.exports = {
@@ -7,15 +8,28 @@ module.exports = {
     // Match protocol
     // match www
     // match known tlds
-    const reg = new RegExp(
+    var reg = new RegExp(
       // '(^|[\s\n]|<br\/?>)' + // Start of link
       '(https?|ftp)' +
       ':\\/\\/' +
       '([\\w\\-\\.]+)' +
       '($|[\\s\\n]|<br\\/?>)' // end of link
     , 'gi')
-    const match = str.match(reg)
-    
-    return match ? match[0] : null
+    var match = str.match(reg)
+
+    if (match) return match[0]
+
+    // Check for known tld
+
+    reg = new RegExp(
+      // '(^|[\s\n]|<br\/?>)' + // Start of link
+      '([\\w\\-\\.]+)' +
+      '.(' + knownTLDs.join('|') + ')' +
+      '($|[\\s\\n]|<br\\/?>)' // end of link
+    , 'gi')
+
+    match = str.match(reg)
+
+    if (match) return match[0]
   }
 }

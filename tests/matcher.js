@@ -15,7 +15,14 @@ test('secure protocol', (t) => {
   t.equal(expected, actual)
 })
 
-test('no protocol', (t) => {
+test('www subdomain', (t) => {
+  t.plan(1)
+  const expected = 'www.google.com'
+  const actual = matcher.testString('check out www.google.com')
+  t.equal(expected, actual)
+})
+
+test('known tld', (t) => {
   t.plan(1)
   const expected = 'google.com'
   const actual = matcher.testString('check out google.com')

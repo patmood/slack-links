@@ -1,8 +1,12 @@
 const request = require('request')
-const linksFromString = require('./links-from-string')
+const pg = require('pg')
+const dbUrl = 'postgres:///slack_links'
 
-const lastFetch = 1
-const links = []
+pg.connect(dbUrl, (err, client, done) => {
+  if (err) throw err
+
+})
+
 const opts = {
   token: 'xoxp-21485397347-21487726449-21489223078-866dafb21c',
   channel: 'C0MEBU4NB',

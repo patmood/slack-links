@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "tape 'tests/**/*.js' | tap-diff"
+    "test": "tape 'tests/**/*.js' | tap-diff",
+    "reset": "cat reset.sql | psql && cat schema.sql | psql slack_links"
   },
   "author": "",
   "license": "ISC",

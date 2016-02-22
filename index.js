@@ -4,8 +4,8 @@ const linksFromString = require('./links-from-string')
 const lastFetch = 1
 const links = []
 
-const token = 'xoxp-4238637166-6341684102-21486580243-5d78808e62'
-const channel = 'C0470JR5N'
+const token = 'xoxp-21485397347-21487726449-21489223078-866dafb21c'
+const channel = 'C0MEBU4NB'
 const oldest = 1
 const pretty = 1
 
@@ -18,15 +18,17 @@ const getHistory = (token, channel, oldest, pretty) => {
       channel,
       oldest,
       pretty,
-    }
+    },
   }, (err, response, body) => {
     if (err) throw err
     if (!body.ok) throw body.error
     // console.log(body)
     body.messages.forEach((msg) => {
-      const links = linksFromString(msg.text)
-      // console.log(msg)
-      if (links.length) console.log(links)
+      const links = msg.text.match(/<(\S+)>/gi)
+      if (!links) return false
+      const urls = links.filter((link) => link.match('http'))
+      // Save message to db here
+      return urls
     })
   })
 }

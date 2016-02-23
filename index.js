@@ -1,3 +1,4 @@
+const koa = require('koa')
 const request = require('request')
 const pg = require('pg')
 const query = require('pg-query')
@@ -34,4 +35,11 @@ const getSlackHistory = (options) => {
   })
 }
 
-getSlackHistory(opts)
+const app = koa()
+
+app.use(function * () {
+  const links = yield query('select * from link_messages')
+  this.body = links[0]
+})
+
+app.listen(7777, () => console.info('🌎 Listening on 7777'))

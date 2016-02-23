@@ -1,11 +1,9 @@
 const request = require('request')
 const pg = require('pg')
+const query = require('pg-query')
 const dbUrl = 'postgres:///slack_links'
 
-pg.connect(dbUrl, (err, client, done) => {
-  if (err) throw err
-
-})
+query.connectionParameters = process.env.DATABASE_URL || dbUrl
 
 const opts = {
   token: 'xoxp-21485397347-21487726449-21489223078-866dafb21c',
@@ -14,7 +12,7 @@ const opts = {
   pretty: 1,
 }
 
-const getHistory = (options) => {
+const getSlackHistory = (options) => {
   request({
     url: 'https://slack.com/api/channels.history',
     json: true,
@@ -27,10 +25,13 @@ const getHistory = (options) => {
       const links = msg.text.match(/<(\S+)>/gi)
       if (!links) return false
       const urls = links.filter((link) => link.match('http'))
-      // Save message to db here
+      if (!urls.length > 0) return false
+      query('insert into link_messages (links, message) values ($1, $2)', [urls, msg.text])
+        .then((result) => console.log('inserted'))
+        .catch((err) => console.log(err))
       return urls
     })
   })
 }
 
-getHistory(opts)
+getSlackHistory(opts)

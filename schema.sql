@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE link_messages (
-    ts timestamp without time zone PRIMARY KEY,
-    uuid uuid NOT NULL UNIQUE,
-    type text NOT NULL,
-    facts text NOT NULL
+    id serial PRIMARY KEY,
+    -- ts timestamp without time zone,
+    links text[] NOT NULL,
+    message text NOT NULL
 );

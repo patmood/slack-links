@@ -42,4 +42,4 @@ const lastMessage = (channel) => {
     .catch((err) => console.log(err))
 }
 
-lastMessage(opts.channel)
+// lastMessage(opts.channel)

@@ -35,8 +35,6 @@ const getSlackHistory = (options) => {
   })
 }
 
-getSlackHistory(opts)
-
 // const const lastMessage = (channel) => {
 //   query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4)',
 //     [msg.ts, urls, msg.text, msg.user, channel])

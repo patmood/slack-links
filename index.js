@@ -35,9 +35,11 @@ const getSlackHistory = (options) => {
   })
 }
 
-// const const lastMessage = (channel) => {
-//   query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4)',
-//     [msg.ts, urls, msg.text, msg.user, channel])
-//     .then((result) => console.log('inserted'))
-//     .catch((err) => console.log(err))
-// }
+const lastMessage = (channel) => {
+  query('SELECT ts FROM link_messages WHERE channel=$1 ORDER BY ts DESC LIMIT 1',
+    [channel])
+    .then((result) => console.log(result[0][0]))
+    .catch((err) => console.log(err))
+}
+
+lastMessage(opts.channel)

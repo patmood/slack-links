@@ -22,34 +22,33 @@ const testOpts = {
   pretty: 1,
 }
 
+// const isFresh = () => {}
+
 const fetchHistory = (options) => {
   redClient.getAsync('lastFetch')
     .then((ts) => {
       if (Date.now() - ts > oneHour) {
         console.log('Fetching new messages')
-
-        // set new fetch time
         redClient.set('lastFetch', Date.now())
-
-        // fetch new messages
-        slack.getHistory(options)
-          .then((messages) => {
-            messages.forEach((msg) => {
-              const links = msg.text.match(/<(\S+)>/gi)
-              if (!links) return false
-
-              const urls = links.filter((link) => link.match('http'))
-              if (!urls.length > 0) return false
-
-              query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
-                [msg.ts, urls, msg.text, msg.user, options.channel])
-                .then((result) => console.log('inserted'))
-                .catch((err) => console.log(err))
-            })
-          })
+        return slack.getHistory(options)
       } else {
         console.log('Message list up to date')
+        return []
       }
+    })
+    .then((messages) => {
+      messages.forEach((msg) => {
+        const links = msg.text.match(/<(\S+)>/gi)
+        if (!links) return false
+
+        const urls = links.filter((link) => link.match('http'))
+        if (!urls.length > 0) return false
+
+        query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
+          [msg.ts, urls, msg.text, msg.user, options.channel])
+          .then((result) => console.log('inserted'))
+          .catch((err) => console.log(err))
+      })
     })
 }
 

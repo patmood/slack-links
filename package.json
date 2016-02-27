@@ -13,6 +13,7 @@
   "dependencies": {
     "koa": "^1.1.2",
     "koa-route": "^2.4.2",
+    "moment": "^2.11.2",
     "pg": "^4.4.6",
     "pg-query": "^0.11.0",
     "request": "^2.69.0"

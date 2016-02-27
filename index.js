@@ -26,10 +26,14 @@ const getSlackHistory = (options) => {
       if (!links) return false
       const urls = links.filter((link) => link.match('http'))
       if (!urls.length > 0) return false
-      query('insert into link_messages (links, message) values ($1, $2)', [urls, msg.text])
+      console.log(`\x1b[33m${JSON.stringify(msg , null, 2)}\x1b[0m`)
+      query('insert into link_messages (ts, links, message, username) values ($1, $2, $3, $4)',
+        [msg.ts, urls, msg.text, msg.user])
         .then((result) => console.log('inserted'))
         .catch((err) => console.log(err))
       return urls
     })
   })
 }
+
+getSlackHistory(opts)

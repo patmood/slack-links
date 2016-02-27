@@ -1,3 +1,4 @@
+const moment = require('moment')
 const linkify = (str) => {
   return str.replace(/<\S+>/gi, (slackLink) => {
     slackLink = slackLink.replace(/[<>]/g, '')
@@ -29,6 +30,8 @@ const Templates = function () {
     <table class="">
       <thead>
         <tr>
+          <th>Time</th>
+          <th>Username</th>
           <th>Links</th>
           <th>Message</th>
         </tr>
@@ -36,6 +39,8 @@ const Templates = function () {
       <tbody>
         ${ messages.map((msg) => `
           <tr class="border-bottom">
+            <td>${moment.unix(msg.ts).fromNow()}</td>
+            <td>${msg.username}</td>
             <td>${msg.links.map((link) => linkify(link)).join('<br />')}</td>
             <td>${linkify(msg.message)}</td>
           </tr>

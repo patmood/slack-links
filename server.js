@@ -1,6 +1,5 @@
 const koa = require('koa')
 const route = require('koa-route')
-const pg = require('pg')
 const query = require('pg-query')
 const dbUrl = 'postgres:///slack_links'
 const templates = require('./templates')

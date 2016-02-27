@@ -11,17 +11,49 @@ const dbUrl = 'postgres:///slack_links'
 const query = require('pg-query')
 query.connectionParameters = process.env.DATABASE_URL || dbUrl
 
+const slack = require('./slack')
 const templates = require('./templates')
 const oneHour = 1000 * 60 * 60
 
-redClient.getAsync('lastFetch')
-  .then((ts) => {
-    console.log(oneHour)
-    if (Date.now() - ts > oneHour) {
-      // fetch new messages
-      redClient.set('lastFetch', Date.now())
-    }
-  })
+const testOpts = {
+  token: 'xoxp-21485397347-21487726449-21489223078-866dafb21c',
+  channel: 'C0MEBU4NB',
+  oldest: 1,
+  pretty: 1,
+}
+
+const fetchHistory = (options) => {
+  redClient.getAsync('lastFetch')
+    .then((ts) => {
+      if (Date.now() - ts > oneHour) {
+        console.log('Fetching new messages')
+
+        // set new fetch time
+        redClient.set('lastFetch', Date.now())
+
+        // fetch new messages
+        slack.getHistory(options)
+          .then((messages) => {
+            messages.forEach((msg) => {
+              const links = msg.text.match(/<(\S+)>/gi)
+              if (!links) return false
+
+              const urls = links.filter((link) => link.match('http'))
+              if (!urls.length > 0) return false
+
+              query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
+                [msg.ts, urls, msg.text, msg.user, options.channel])
+                .then((result) => console.log('inserted'))
+                .catch((err) => console.log(err))
+            })
+          })
+      } else {
+        console.log('Message list up to date')
+      }
+    })
+}
+
+fetchHistory(testOpts)
 
 const app = koa()
 
@@ -40,6 +72,11 @@ app.use(route.get('/links', function * () {
 app.use(route.get('/', function * () {
   const links = yield query('select * from link_messages')
   this.body = templates.linkPage(links[0])
+}))
+
+app.use(route.get('/reset', function * () {
+  yield redClient.delAsync('lastFetch')
+  this.body = 'OK'
 }))
 
 app.listen(7777, () => console.info('🌎 Listening on 7777'))

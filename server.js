@@ -22,37 +22,31 @@ const testOpts = {
   pretty: 1,
 }
 
-// const isFresh = () => {}
-
 const fetchHistory = (options) => {
-  redClient.getAsync('lastFetch')
+  return redClient.getAsync('lastFetch')
     .then((ts) => {
-      if (Date.now() - ts > oneHour) {
-        console.log('Fetching new messages')
-        redClient.set('lastFetch', Date.now())
-        return slack.getHistory(options)
-      } else {
-        console.log('Message list up to date')
-        return []
-      }
-    })
-    .then((messages) => {
-      messages.forEach((msg) => {
-        const links = msg.text.match(/<(\S+)>/gi)
-        if (!links) return false
+      if (Date.now() - ts < oneHour) return console.log('Up to date')
 
-        const urls = links.filter((link) => link.match('http'))
-        if (!urls.length > 0) return false
+      console.log('Fetching new messages')
+      redClient.set('lastFetch', Date.now())
+      return slack.getHistory(options)
+        .then((messages) => {
+          const promises = messages.reduce((memo, msg) => {
+            const links = msg.text.match(/<(\S+)>/gi)
+            if (!links) return memo
 
-        query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
-          [msg.ts, urls, msg.text, msg.user, options.channel])
-          .then((result) => console.log('inserted'))
-          .catch((err) => console.log(err))
-      })
+            const urls = links.filter((link) => link.match('http'))
+            if (!urls.length > 0) return memo
+
+            return memo.concat([query('insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
+              [msg.ts, urls, msg.text, msg.user, options.channel])])
+              // .then((result) => console.log('inserted'))
+              // .catch((err) => console.log(err))
+          }, [])
+          return Promise.all(promises)
+        })
     })
 }
-
-fetchHistory(testOpts)
 
 const app = koa()
 
@@ -64,6 +58,7 @@ app.use(function * (next) {
 })
 
 app.use(route.get('/links', function * () {
+  yield fetchHistory(testOpts)
   const links = yield query('select * from link_messages')
   this.body = links[0]
 }))

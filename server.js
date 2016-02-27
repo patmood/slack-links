@@ -1,10 +1,11 @@
 const koa = require('koa')
 const route = require('koa-route')
-const query = require('pg-query')
 const dbUrl = 'postgres:///slack_links'
+const query = require('pg-query')
+query.connectionParameters = process.env.DATABASE_URL || dbUrl
+
 const templates = require('./templates')
 
-query.connectionParameters = process.env.DATABASE_URL || dbUrl
 
 const app = koa()
 

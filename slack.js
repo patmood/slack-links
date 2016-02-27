@@ -1,5 +1,4 @@
 const request = require('request')
-const pg = require('pg')
 const dbUrl = 'postgres:///slack_links'
 const query = require('pg-query')
 query.connectionParameters = process.env.DATABASE_URL || dbUrl
@@ -11,7 +10,7 @@ const opts = {
   pretty: 1,
 }
 
-const getSlackHistory = (options) => {
+const getHistory = (options) => {
   request({
     url: 'https://slack.com/api/channels.history',
     json: true,
@@ -19,7 +18,7 @@ const getSlackHistory = (options) => {
   }, (err, response, body) => {
     if (err) throw err
     if (!body.ok) throw body.error
-    // console.log(body)
+
     body.messages.forEach((msg) => {
       const links = msg.text.match(/<(\S+)>/gi)
       if (!links) return false
@@ -41,5 +40,3 @@ const lastMessage = (channel) => {
     .then((result) => console.log(result[0][0]))
     .catch((err) => console.log(err))
 }
-
-// lastMessage(opts.channel)

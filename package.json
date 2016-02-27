@@ -2,7 +2,7 @@
   "name": "slack-links",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "tape 'tests/**/*.js' | tap-diff",

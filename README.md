@@ -1,5 +1,11 @@
 #Slack Link Archiver
 
+Create a `.env` file with the following keys:
+
+```
+SLACK_TOKEN=XXXXXXXX
+```
+
 ##TODO
 - Clean up `fetchHistory`
 - Make paginated calls

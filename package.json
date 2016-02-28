@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.3.3",
+    "dotenv": "^2.0.0",
     "koa": "^1.1.2",
     "koa-route": "^2.4.2",
     "moment": "^2.11.2",

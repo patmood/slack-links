@@ -1,3 +1,4 @@
+require('dotenv').load()
 const koa = require('koa')
 const route = require('koa-route')
 global.Promise = require('bluebird')
@@ -13,10 +14,10 @@ query.connectionParameters = process.env.DATABASE_URL || dbUrl
 
 const slack = require('./slack')
 const templates = require('./templates')
-const oneHour = 1000 * 60 * 60
+const oneHour = 60 * 60
 
 const testOpts = {
-  token: 'xoxp-21485397347-21487726449-21489223078-866dafb21c',
+  token: process.env.SLACK_TOKEN,
   channel: 'C0MEBU4NB',
   oldest: 1,
   pretty: 1,
@@ -25,7 +26,7 @@ const testOpts = {
 const fetchHistory = (options) => {
   return redClient.getAsync('lastFetch')
     .then((ts) => {
-      if (Date.now() / 1000 - ts < oneHour) return console.log('Up to date')
+      if ((Date.now() / 1000) - ts < oneHour) return console.log('Up to date')
 
       console.log('Fetching new messages')
       redClient.set('lastFetch', Date.now() / 1000)

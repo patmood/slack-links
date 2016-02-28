@@ -50,8 +50,9 @@ const app = koa()
 
 // Get history on startup
 fetchHistory(testOpts)
+
 // Update history every 2 hours
-setInterval(() => fetchHistory(testOpts), 60*60*2)
+setInterval(() => fetchHistory(testOpts), 60 * 60 * 2)
 
 // Log request times
 app.use(function * (next) {

@@ -18,9 +18,10 @@ const oneHour = 60 * 60
 
 const testOpts = {
   token: process.env.SLACK_TOKEN,
-  channel: 'C0MEBU4NB',
+  channel: 'C0470JR5N',//'C0MEBU4NB',
   oldest: 1,
   pretty: 1,
+  count: 400,
 }
 
 const fetchHistory = (options) => {
@@ -32,9 +33,9 @@ const fetchHistory = (options) => {
       redClient.set('lastFetch', Date.now() / 1000)
       const newOptions = Object.assign({}, options, { oldest: ts || 1 })
       return slack.getHistory(newOptions)
-    }).then((messages) => {
-      if (!messages) return
-      const promises = messages.reduce((memo, msg) => {
+    }).then((body) => {
+      if (!body || !body.messages) return
+      const promises = body.messages.reduce((memo, msg) => {
         const links = msg.text.match(/<(\S+)>/gi)
         if (!links) return memo
 

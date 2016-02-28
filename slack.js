@@ -34,8 +34,20 @@ const allHistory = (options, allMessages) => {
     })
 }
 
+const linkReducer = (memo, msg) => {
+  const links = msg.text.match(/<(\S+)>/gi)
+  if (!links) return memo
+
+  const urls = links.filter((link) => link.match('http'))
+  if (!urls.length > 0) return memo
+  msg.urls = urls
+  return memo.concat([ msg ])
+}
+
 module.exports = {
   getHistory,
+  allHistory,
+  linkReducer,
 }
 
 if (!module.parent) {

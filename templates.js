@@ -3,7 +3,9 @@ const linkify = (str) => {
   return str.replace(/<\S+>/gi, (slackLink) => {
     slackLink = slackLink.replace(/[<>]/g, '')
     const urlAnchor = slackLink.split('|')
-    return `<a href='${urlAnchor[0]}'>${urlAnchor[1]}</a>`
+    const url = urlAnchor[0]
+    const anchor = urlAnchor[1] || urlAnchor[0]
+    return `<a href='${url}'>${anchor}</a>`
   })
 }
 

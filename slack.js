@@ -1,4 +1,3 @@
-require('dotenv').load()
 const request = require('request')
 
 const getHistory = (options) => {
@@ -50,15 +49,16 @@ module.exports = {
   linkReducer,
 }
 
-if (!module.parent) {
-  const testOpts = {
-    token: process.env.SLACK_TOKEN,
-    channel: 'C0470JR5N',//'C0MEBU4NB',
-    oldest: 1,
-    pretty: 1,
-    count: 400,
-  }
-  allHistory(testOpts).then((msgs) => {
-    console.log('final count', msgs.length)
-  })
-}
+// if (!module.parent) {
+//   require('dotenv').load()
+//   const testOpts = {
+//     token: process.env.SLACK_TOKEN,
+//     channel: 'C0470JR5N',//'C0MEBU4NB',
+//     oldest: 1,
+//     pretty: 1,
+//     count: 400,
+//   }
+//   allHistory(testOpts).then((msgs) => {
+//     console.log('final count', msgs.length)
+//   })
+// }

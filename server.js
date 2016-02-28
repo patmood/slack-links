@@ -48,6 +48,11 @@ const fetchHistory = (options) => {
 
 const app = koa()
 
+// Get history on startup
+fetchHistory(testOpts)
+// Update history every 2 hours
+setInterval(() => fetchHistory(testOpts), 60*60*2)
+
 // Log request times
 app.use(function * (next) {
   const start = process.hrtime()
@@ -62,7 +67,6 @@ app.use(route.get('/links', function * () {
 }))
 
 app.use(route.get('/', function * () {
-  yield fetchHistory(testOpts)
   const lastFetch = yield redClient.getAsync('lastFetch')
   const links = yield query('select * from link_messages')
   this.body = templates.linkPage({ messages: links[0], lastFetch: lastFetch })

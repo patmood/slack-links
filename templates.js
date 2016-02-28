@@ -8,7 +8,7 @@ const linkify = (str) => {
 }
 
 const Templates = function () {
-  this.layout = (content) => `
+  this.layout = (data) => `
     <!DOCTYPE html>
     <html>
     <head>
@@ -20,12 +20,18 @@ const Templates = function () {
       </style>
     </head>
     <body>
-      ${content}
+      <h1>Slack Links</h1>
+      ${data.lastFetch
+        ? '<h2>Last fetched: ' + moment.unix(data.lastFetch).fromNow() + '</h2>'
+        : null}
+      ${data.table}
     </body>
     </html>
   `
 
-  this.linkPage = (messages) => {
+  this.linkPage = (data) => {
+    const messages = data.messages
+    const lastFetch = data.lastFetch
     const table = `
     <table class="">
       <thead>
@@ -48,7 +54,8 @@ const Templates = function () {
       </tbody>
     </table>
     `
-    return this.layout(table)
+    const args = { table, lastFetch }
+    return this.layout(args)
   }
 }
 

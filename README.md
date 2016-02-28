@@ -1,4 +1,6 @@
 #Slack Link Archiver
 
 ##TODO
-- Fetch on interval
+- Clean up `fetchHistory`
+- Make paginated calls
+- Should slack history be a generator that keeps paging?

@@ -53,7 +53,7 @@ module.exports = {
 //   require('dotenv').load()
 //   const testOpts = {
 //     token: process.env.SLACK_TOKEN,
-//     channel: 'C0470JR5N',//'C0MEBU4NB',
+//     channel: process.env.SLACK_CHANNEL,
 //     oldest: 1,
 //     pretty: 1,
 //     count: 400,

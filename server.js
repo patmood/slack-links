@@ -28,14 +28,12 @@ const fetchHistory = (options) => {
   return redClient.getAsync('lastFetch')
     .then((ts) => {
       if ((Date.now() / 1000) - ts < oneHour) return console.log('Up to date')
-
-      console.log('Fetching new messages')
       const newOptions = Object.assign({}, options, { oldest: ts || 1 })
       return slack.allHistory(newOptions)
     }).then((messages) => {
       if (!messages) return
-      console.log(Array.isArray(messages))
       const linkMessages = messages.reduce(slack.linkReducer, [])
+
       // This creates hundreds on individual queries. Change to batch insert
       const promises = linkMessages.map((msg) => query(
         'insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',

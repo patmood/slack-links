@@ -1,4 +1,5 @@
 require('dotenv').load()
+const through2 = require('through2')
 const koa = require('koa')
 const route = require('koa-route')
 global.Promise = require('bluebird')
@@ -6,7 +7,7 @@ const redis = require('redis')
 Promise.promisifyAll(redis.RedisClient.prototype)
 Promise.promisifyAll(redis.Multi.prototype)
 const redClient = redis.createClient()
-redClient.on('error', (err) => console.log(err))
+redClient.on('error', (err) => { throw err })
 
 const dbUrl = 'postgres:///slack_links'
 const query = require('pg-query')
@@ -29,20 +30,34 @@ const fetchHistory = (options) => {
     .then((ts) => {
       if ((Date.now() / 1000) - ts < oneHour) return console.log('Up to date')
       const newOptions = Object.assign({}, options, { oldest: ts || 1 })
-      return slack.allHistory(newOptions)
-    }).then((messages) => {
-      if (!messages) return
-      const linkMessages = messages.reduce(slack.linkReducer, [])
-
-      // This creates hundreds on individual queries. Change to batch insert
-      const promises = linkMessages.map((msg) => query(
-        'insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
-        [msg.ts, msg.urls, msg.text, msg.user, options.channel]
-      ))
-      redClient.set('lastFetch', Date.now() / 1000)
-      return Promise.all(promises)
+      slack.allHistoryStream(newOptions).pipe(streamReader)
     })
 }
+
+// Stream Reader
+const streamReader = through2({ objectMode: true }, function(chunk, enc, callback) {
+  const result = chunk.toString()
+  this.push(JSON.parse(result))
+  callback()
+})
+
+streamReader.on('data', messages => {
+  redClient.set('lastFetch', Date.now() / 1000)
+  messages.forEach((msg) => {
+    const msgWithUrl = slack.extractLinks(msg)
+    if (!msgWithUrl.urls) return false
+    query(
+      'insert into link_messages (ts, links, message, username, channel) values ($1, $2, $3, $4, $5)',
+      [
+        msgWithUrl.ts,
+        msgWithUrl.urls,
+        msgWithUrl.text,
+        msgWithUrl.user,
+        process.env.SLACK_CHANNEL,
+      ]
+    ).then(() => console.log('Slack message saved'))
+  })
+})
 
 const app = koa()
 
@@ -59,6 +74,7 @@ app.use(function * (next) {
   console.log(process.hrtime(start), this.request.path)
 })
 
+// ROUTES
 app.use(route.get('/links', function * () {
   yield fetchHistory(testOpts)
   const links = yield query('select * from link_messages')

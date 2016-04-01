@@ -50,7 +50,7 @@ const Templates = function () {
             <td>${moment.unix(msg.ts).fromNow()}</td>
             <td>${msg.username}</td>
             <td>${msg.links.map((link) => linkify(link)).join('<br />')}</td>
-            <td>${linkify(msg.message)}</td>
+            <td class='hide'>${linkify(msg.message)}</td>
           </tr>
         `).join('') }
       </tbody>

@@ -3,8 +3,7 @@
 --
 
 CREATE TABLE link_messages (
-    id serial PRIMARY KEY,
-    ts decimal NOT NULL,
+    ts decimal PRIMARY KEY,
     links text[] NOT NULL,
     message text NOT NULL,
     username text NOT NULL,

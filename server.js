@@ -28,7 +28,8 @@ const fetchHistory = (options) => {
   return redClient.getAsync('lastFetch')
     .then((ts) => {
       if ((Date.now() / 1000) - ts < oneHour) return console.log('Up to date')
-      const newOptions = Object.assign({}, options, { oldest: ts || 1 })
+      console.log('Last fetch:', ts)
+      const newOptions = Object.assign({}, options, { oldest: ts })
       slack.allHistoryStream(newOptions).pipe(streamReader)
     })
 }

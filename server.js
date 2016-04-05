@@ -15,14 +15,13 @@ query.connectionParameters = process.env.DATABASE_URL || dbUrl
 
 const slack = require('./slack')
 const templates = require('./templates')
-const oneHour = 60 * 60
+const oneHour = 60 * 60 * 1000
 
 const testOpts = {
   token: process.env.SLACK_TOKEN,
   channel: process.env.SLACK_CHANNEL,
-  oldest: 1,
-  pretty: 1,
-  count: 400,
+  // pretty: 1,
+  // count: 100,
 }
 
 const fetchHistory = (options) => {
@@ -35,13 +34,14 @@ const fetchHistory = (options) => {
 }
 
 // Stream Reader
-const streamReader = through2({ objectMode: true }, function(chunk, enc, callback) {
+const streamReader = through2.obj(function (chunk, enc, callback) {
   const result = chunk.toString()
   this.push(JSON.parse(result))
   callback()
 })
 
 streamReader.on('data', messages => {
+  console.log('DATA', messages.length)
   redClient.set('lastFetch', Date.now() / 1000)
   messages.forEach((msg) => {
     const msgWithUrl = slack.extractLinks(msg)
@@ -59,13 +59,18 @@ streamReader.on('data', messages => {
   })
 })
 
+streamReader.on('error', function handleError (err) {
+  console.log('Stream Error:', err)
+  this.end()
+})
+
 const app = koa()
 
 // Get history on startup
 fetchHistory(testOpts)
 
 // Update history every 2 hours
-setInterval(() => fetchHistory(testOpts), 60 * 60 * 2)
+setInterval(() => fetchHistory(testOpts), oneHour)
 
 // Log request times
 app.use(function * (next) {

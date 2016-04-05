@@ -2,6 +2,7 @@ const request = require('request')
 const Readable = require('stream').Readable
 
 const getHistory = (options, next) => {
+  console.log(`\x1b[33m${JSON.stringify(options , null, 2)}\x1b[0m`)
   request({
     url: 'https://slack.com/api/channels.history',
     json: true,
@@ -23,18 +24,20 @@ const allHistoryStream = (options) => {
       }
 
       if (body.messages.length === 0) {
-        rs.push(null)
-      }
-
-      rs.push(JSON.stringify(body.messages))
-      console.log(`Pushed ${body.messages.length} messages to stream`)
-
-      if (body.has_more) {
-        const lastMessage = body.messages[body.messages.length - 1].ts
-        options = Object.assign({}, options, { oldest: lastMessage })
-      } else {
+        console.log('No new messages, ending stream')
         return rs.push(null)
       }
+
+      const latest = body.messages[body.messages.length - 1].ts
+      options = Object.assign({}, options, { latest: latest })
+      console.log(
+        'length:', body.messages.length,
+        'has_more:', body.has_more,
+        'OK:', body.ok,
+        'latest:', latest
+      )
+      console.log(`Pushing ${body.messages.length} messages to stream`)
+      rs.push(JSON.stringify(body.messages))
     })
   }
   return rs
@@ -53,6 +56,7 @@ const linkReducer = (memo, msg) => {
 const extractLinks = (message) => {
   // Dont include file uploads as links
   if (message.subtype === "file_share") return message
+  if (!message.text) return message
 
   // Check if contains link
   const links = message.text.match(/<(\S+)>/gi)

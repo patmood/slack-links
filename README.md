@@ -13,6 +13,11 @@ SLACK_CHANNEL=C0470JR5N
 
 Run server `npm start`
 
-Visit `http://localhost:7777/` to view links!
+## Routes:
+
+- `http://localhost:7777/` to view links
+- `http://localhost:7777/reset` to clear the last fetch time
+- `http://localhost:7777/links` to force a fetch and view data as json
+
 
 Note: Requires PostgreSQL and Redis

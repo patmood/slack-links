@@ -1,4 +1,5 @@
 const moment = require('moment')
+
 const linkify = (str) => {
   return str.replace(/<\S+>/gi, (slackLink) => {
     slackLink = slackLink.replace(/[<>]/g, '')
@@ -25,7 +26,7 @@ const Templates = function () {
       <h1>Slack Links</h1>
       ${data.lastFetch
         ? '<h2>Last fetched: ' + moment.unix(data.lastFetch).fromNow() + '</h2>'
-        : null}
+        : '<h2>Fetching history - Please check back in a moment</h2>'}
       ${data.table}
     </body>
     </html>
@@ -41,7 +42,7 @@ const Templates = function () {
           <th>Time</th>
           <th>Username</th>
           <th>Links</th>
-          <th>Message</th>
+          <th class='hide'>Message</th>
         </tr>
       </thead>
       <tbody>

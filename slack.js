@@ -15,21 +15,27 @@ const getHistory = (options, next) => {
 }
 
 const allHistoryStream = (options) => {
-  const rs = new Readable()
-  rs._read = () => {
+  const stream = new Readable()
+  var has_more = true
+  stream._read = () => {
+    if (!has_more) {
+      console.log('Last request has_more == false, ending stream')
+      return stream.push(null)
+    }
     getHistory(options, (err, body) => {
       if (err) {
         console.log(err)
-        return rs.push(null)
+        return stream.push(null)
       }
 
       if (body.messages.length === 0) {
         console.log('No new messages, ending stream')
-        return rs.push(null)
+        return stream.push(null)
       }
 
       const latest = body.messages[body.messages.length - 1].ts
       options = Object.assign({}, options, { latest: latest })
+      has_more = body.has_more
       console.log(
         'length:', body.messages.length,
         'has_more:', body.has_more,
@@ -37,10 +43,10 @@ const allHistoryStream = (options) => {
         'latest:', latest
       )
       console.log(`Pushing ${body.messages.length} messages to stream`)
-      rs.push(JSON.stringify(body.messages))
+      stream.push(JSON.stringify(body.messages))
     })
   }
-  return rs
+  return stream
 }
 
 const linkReducer = (memo, msg) => {

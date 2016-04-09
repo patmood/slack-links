@@ -121,4 +121,4 @@ app.use(route.get('/reset', function * () {
   this.body = 'OK'
 }))
 
-app.listen(7777, () => console.info('🌎 Listening on 7777'))
+app.listen(process.env.PORT || 7777, () => console.info('🌎 Listening on 7777'))

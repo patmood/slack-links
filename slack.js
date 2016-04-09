@@ -2,7 +2,7 @@ const request = require('request')
 const Readable = require('stream').Readable
 
 const getHistory = (options, next) => {
-  console.log(`\x1b[33m${JSON.stringify(options , null, 2)}\x1b[0m`)
+  // console.log(`\x1b[33m${JSON.stringify(options , null, 2)}\x1b[0m`)
   request({
     url: 'https://slack.com/api/channels.history',
     json: true,

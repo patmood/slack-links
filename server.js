@@ -22,7 +22,7 @@ const testOpts = {
   token: process.env.SLACK_TOKEN,
   channel: process.env.SLACK_CHANNEL,
   // pretty: 1,
-  count: 2,
+  count: 100,
 }
 
 const fetchHistory = (options) => {

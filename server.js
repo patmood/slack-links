@@ -7,7 +7,7 @@ global.Promise = require('bluebird')
 const redis = require('redis')
 Promise.promisifyAll(redis.RedisClient.prototype)
 Promise.promisifyAll(redis.Multi.prototype)
-const redClient = redis.createClient()
+const redClient = redis.createClient({ url: process.env.REDIS_URL })
 redClient.on('error', (err) => { throw err })
 
 const query = require('pg-query')

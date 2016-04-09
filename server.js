@@ -56,7 +56,9 @@ streamReader.on('data', messages => {
         msgWithUrl.user,
         process.env.SLACK_CHANNEL,
       ]
-    ).then(() => console.log('Slack message saved'))
+    )
+    .then((data) => console.log('Slack message saved'))
+    .catch((err) => { throw err })
   })
 })
 

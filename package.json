@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "tape 'tests/**/*.js' | tap-diff",
-    "reset": "cat reset.sql | psql && cat schema.sql | psql slack_links"
+    "reset": "cat reset.sql | psql && cat schema.sql | psql slack_links; redis-cli flushdb"
   },
   "engines": {
     "node": ">5.3.0"

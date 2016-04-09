@@ -61,7 +61,7 @@ const linkReducer = (memo, msg) => {
 
 const extractLinks = (message) => {
   // Dont include file uploads as links
-  if (message.subtype === "file_share") return message
+  if (message.subtype === 'file_share') return message
   if (!message.text) return message
 
   // Check if contains link

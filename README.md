@@ -4,12 +4,17 @@ Install dependencies with `npm install`
 
 Setup database `npm run reset`
 
+Generate a test token for your team: https://api.slack.com/docs/oauth-test-tokens
+
+
+
 Create a `.env` file in the root directory with your slack token and channel:
 
 ```
 SLACK_TOKEN=XXXXXXXX
 SLACK_CHANNEL=C0470JR5N
 ```
+
 
 Run server `npm start`
 

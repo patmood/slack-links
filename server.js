@@ -1,6 +1,7 @@
 require('dotenv').load()
 const through2 = require('through2')
 const koa = require('koa')
+const auth = require('koa-basic-auth')
 const route = require('koa-route')
 global.Promise = require('bluebird')
 const redis = require('redis')
@@ -67,6 +68,28 @@ streamReader.on('error', function handleError (err) {
 })
 
 const app = koa()
+
+// Handle 401
+app.use(function * (next) {
+  try {
+    yield next
+  } catch (err) {
+    console.log(err.status)
+    if (err.status === 401) {
+      this.status = 401
+      this.set('WWW-Authenticate', 'Basic')
+      this.body = 'You shall not pass'
+    } else {
+      throw err
+    }
+  }
+})
+
+// Authentication
+if (process.env.NODE_ENV !== 'DEVELOPMENT') {
+  if (!process.env.AUTH_NAME || !process.env.AUTH_PASS) throw new Error('Auth name and pass required')
+  app.use(auth({ name: process.env.AUTH_NAME, pass: process.env.AUTH_PASS }))
+}
 
 // Get history on startup
 fetchHistory(testOpts)

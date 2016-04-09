@@ -15,13 +15,17 @@ Generate a test token for your team at the [Slack API docs](https://api.slack.co
 
 List your channels by making a GET request with your token: `https://slack.com/api/channels.list?pretty=1&token=YOUR_TOKEN`
 
-Create a `.env` file in the root directory with your slack token and the channel ID to archive:
+Edit `.envexample` with your slack token and channel, then RENAME the file to `.env` (which will not be committed to the repo).
+
+If you plan on running this in production, change the NODE_ENV and choose a username/pass to protect the page with http basic auth so you do not expose your slack history.
 
 ```
 SLACK_TOKEN=XXXXXXXX
-SLACK_CHANNEL=C0470JR5N
+SLACK_CHANNEL=XXXXX
+AUTH_NAME=XXXXX
+AUTH_PASS=XXXXX
+NODE_ENV=DEVELOPMENT
 ```
-Note: this will not be committed to your repo
 
 Run server with `npm start`
 

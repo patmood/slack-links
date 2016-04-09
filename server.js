@@ -21,7 +21,7 @@ const testOpts = {
   token: process.env.SLACK_TOKEN,
   channel: process.env.SLACK_CHANNEL,
   // pretty: 1,
-  // count: 100,
+  count: 2,
 }
 
 const fetchHistory = (options) => {
@@ -42,7 +42,6 @@ const streamReader = through2.obj(function (chunk, enc, callback) {
 })
 
 streamReader.on('data', messages => {
-  console.log('DATA', messages.length)
   redClient.set('lastFetch', Date.now() / 1000)
   messages.forEach((msg) => {
     const msgWithUrl = slack.extractLinks(msg)
@@ -57,7 +56,7 @@ streamReader.on('data', messages => {
         process.env.SLACK_CHANNEL,
       ]
     )
-    .then((data) => console.log('Slack message saved'))
+    .then(() => console.log('Slack message saved'))
     .catch((err) => { throw err })
   })
 })

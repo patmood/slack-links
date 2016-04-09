@@ -10,9 +10,8 @@ Promise.promisifyAll(redis.Multi.prototype)
 const redClient = redis.createClient()
 redClient.on('error', (err) => { throw err })
 
-const dbUrl = 'postgres:///slack_links'
 const query = require('pg-query')
-query.connectionParameters = process.env.DATABASE_URL || dbUrl
+query.connectionParameters = process.env.DATABASE_URL
 
 const slack = require('./slack')
 const templates = require('./templates')

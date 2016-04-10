@@ -36,13 +36,7 @@ const allHistoryStream = (options) => {
       const latest = body.messages[body.messages.length - 1].ts
       options = Object.assign({}, options, { latest: latest })
       has_more = body.has_more
-      console.log(
-        'length:', body.messages.length,
-        'has_more:', body.has_more,
-        'OK:', body.ok,
-        'latest:', latest
-      )
-      console.log(`Pushing ${body.messages.length} messages to stream`)
+      console.log(`Pushing ${body.messages.length} messages to stream. More to come? ${has_more}. Latest: ${latest}`)
       stream.push(JSON.stringify(body.messages))
     })
   }

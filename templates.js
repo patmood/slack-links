@@ -25,7 +25,7 @@ const Templates = function () {
     <body>
       <h1>Slack Links</h1>
       ${data.lastFetch
-        ? '<h2>Last fetched: ' + moment.unix(data.lastFetch).fromNow() + '</h2>'
+        ? '<h2>Last fetched: ' + moment.unix(data.lastFetch / 1000).fromNow() + '</h2>'
         : '<h2>Fetching history - Please check back in a moment</h2>'}
       ${data.table}
     </body>
@@ -36,9 +36,9 @@ const Templates = function () {
     const messages = data.messages
     const lastFetch = data.lastFetch
     const table = `
-    <table class="">
+    <table class="table">
       <thead>
-        <tr>
+        <tr class="border-bottom border-black">
           <th>Time</th>
           <th>Username</th>
           <th>Links</th>
@@ -47,11 +47,11 @@ const Templates = function () {
       </thead>
       <tbody>
         ${ messages.map((msg) => `
-          <tr class="border-bottom">
-            <td>${moment.unix(msg.ts).fromNow()}</td>
+          <tr class="border-bottom border-gray py1">
+            <td class="nowrap">${moment.unix(msg.ts).fromNow()}</td>
             <td>${msg.username}</td>
             <td>${msg.links.map((link) => linkify(link)).join('<br />')}</td>
-            <td class='hide'>${linkify(msg.message)}</td>
+            <td class="hide">${linkify(msg.message)}</td>
           </tr>
         `).join('') }
       </tbody>

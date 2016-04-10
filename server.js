@@ -27,8 +27,8 @@ const testOpts = {
 const fetchHistory = (options) => {
   return redClient.getAsync('lastFetch')
     .then((ts) => {
-      if ((Date.now() / 1000) - ts < oneHour) return console.log('Up to date')
-      console.log('Last fetch:', ts)
+      if (Date.now() - ts < oneHour) return console.log('Up to date')
+      redClient.set('lastFetch', Date.now())
       const newOptions = Object.assign({}, options, { oldest: ts })
       slack.allHistoryStream(newOptions).pipe(streamReader)
     })
@@ -42,7 +42,6 @@ const streamReader = through2.obj(function (chunk, enc, callback) {
 })
 
 streamReader.on('data', messages => {
-  redClient.set('lastFetch', Date.now() / 1000)
   messages.forEach((msg) => {
     const msgWithUrl = slack.extractLinks(msg)
     if (!msgWithUrl.urls) return false

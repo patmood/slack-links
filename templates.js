@@ -17,7 +17,7 @@ const Templates = function () {
     <head>
       <meta charset="utf-8">
       <title>Slack Links</title>
-      <link href="https://npmcdn.com/basscss@8.0.0/css/basscss.min.css" rel="stylesheet">
+      <link href="https://unpkg.com/basscss@8.0.0/css/basscss.min.css" rel="stylesheet">
       <style>
         body { font-family: Helvetica, Arial, "Lucida Grande", sans-serif; }
       </style>
